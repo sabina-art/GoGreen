@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GoGreen Park Survey</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #4d6c3b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    header img {
+      width: 100%;
+      border: 4px solid purple;
+    }
+    .button {
+      background-color: #2e4730;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .hidden {
+      display: none;
+    }
+    textarea, input[type="file"], input[type="range"], input[type="text"] {
+      margin-top: 10px;
+      width: 80%;
+    }
+    .question {
+      text-align: left;
+      margin: 15px auto;
+      width: 80%;
+    }
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>GoGreen</h1>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Park_lake_path_people.jpg/800px-Park_lake_path_people.jpg" alt="Park">
+    <h2>Clean. Safe. Care.</h2>
+  </header>
+
+  <div id="welcome" class="section">
+    <h2>WELCOME TO GOGREEN WEBSITE</h2>
+    <p>CHOOSE A TOPIC TO START A SURVEY</p>
+    <button class="button" onclick="chooseTopic('Behavior')">BEHAVIOR</button>
+    <button class="button" onclick="chooseTopic('Safety')">SAFETY</button>
+    <button class="button" onclick="chooseTopic('Wellness')">WELLNESS</button>
+  </div>
+
+  <div id="survey" class="hidden">
+    <h2 id="surveyTitle"></h2>
+    <div id="questions"></div>
+
+    <div class="question">
+      <label>Upload Image (optional):</label>
+      <input type="file" id="imageUpload">
+    </div>
+
+    <div class="question">
+      <label>Additional Comments:</label>
+      <textarea id="comments" rows="4" cols="50" placeholder="Enter comments here..."></textarea>
+    </div>
+
+    <button class="button" onclick="submitSurvey()">Submit</button>
+  </div>
+
+  <div id="confirmation" class="hidden">
+    <h2>Thank you!</h2>
+    <p>You’ve helped the park and earned <strong><span id="points">0</span></strong> point(s)! 🌿</p>
+    <p>What would you like to do next?</p>
+    <button class="button" onclick="restart()">Take Another Survey</button>
+    <button class="button" onclick="showSection('share')">Share Results</button>
+    <button class="button" onclick="showSection('suggest')">Leave Suggestion</button>
+    <button class="button" onclick="showSection('thankyou')">Exit</button>
+  </div>
+
+  <div id="share" class="hidden">
+    <h2>Share Results</h2>
+    <p>Spread the word about helping the park!</p>
+    <a class="button" target="_blank"
+       href="https://www.facebook.com/sharer/sharer.php?u=https://yourparkwebsite.example">
+      Share on Facebook
+    </a>
+    <a class="button" target="_blank"
+       href="https://twitter.com/intent/tweet?text=I%20just%20completed%20a%20GoGreen%20Park%20Survey!%20🌿%20%23GoGreen%20%23ParkCare&url=https://yourparkwebsite.example">
+      Share on Twitter
+    </a><br><br>
+    <button class="button" onclick="showSection('thankyou')">Done</button>
+  </div>
+
+  <div id="suggest" class="hidden">
+    <h2>Leave a Suggestion</h2>
+    <textarea id="suggestionInput" rows="4" cols="50" placeholder="Write your suggestion..."></textarea><br>
+    <button class="button" onclick="submitSuggestion()">Submit Suggestion</button>
+  </div>
+
+  <div id="thankyou" class="hidden">
+    <h2>Thank you for your input!</h2>
+    <p>We appreciate your feedback. Enjoy your day at the park! 🌳</p>
+  </div>
+
+  <script>
+    let userPoints = 0;
+
+    function chooseTopic(topic) {
+      document.getElementById("surveyTitle").innerText = `Survey: ${topic}`;
+      generateQuestions(topic);
+      showSection('survey');
+    }
+
+    function generateQuestions(topic) {
+      const container = document.getElementById("questions");
+      container.innerHTML = ""; // Clear previous questions
+
+      if (topic === "Behavior") {
+        container.innerHTML = `
+          <div class="question">
+            <label>1) HOW OFTEN DO YOU VISIT THIS PARK?</label>
+            <label><input type="radio" name="visit" value="daily"> DAILY</label>
+            <label><input type="radio" name="visit" value="weekly"> WEEKLY</label>
+            <label><input type="radio" name="visit" value="rarely"> RARELY</label>
+          </div>
+          <div class="question">
+            <label>2) WHAT DO YOU USUALLY DO HERE? (Select all that apply)</label>
+            <label><input type="checkbox" name="activity" value="walking"> WALKING</label>
+            <label><input type="checkbox" name="activity" value="picnic"> PICNIC</label>
+            <label><input type="checkbox" name="activity" value="sport"> SPORT</label>
+            <label><input type="checkbox" name="activity" value="other"> OTHER: <input type="text" /></label>
+          </div>
+          <div class="question">
+            <label>3) DO YOU USE RECYCLING BINS IN THE PARK?</label>
+            <label><input type="radio" name="recycling" value="always"> ALWAYS</label>
+            <label><input type="radio" name="recycling" value="sometimes"> SOMETIME</label>
+            <label><input type="radio" name="recycling" value="never"> NEVER</label>
+          </div>
+        `;
+      } else if (topic === "Safety") {
+        container.innerHTML = `
+          <div class="question">
+            <label>1) HOW SAFE DO YOU FEEL IN THIS PARK?</label>
+            <label><input type="radio" name="safe" value="very safe"> VERY SAFE</label>
+            <label><input type="radio" name="safe" value="safe"> SAFE</label>
+            <label><input type="radio" name="safe" value="unsafe"> VERY UNSAFE</label>
+          </div>
+          <div class="question">
+            <label>2) ARE PARK PATHWAYS WELL-LIT AND ACCESSIBLE?</label>
+            <label><input type="radio" name="lighting" value="yes"> YES</label>
+            <label><input type="radio" name="lighting" value="no"> NO</label>
+            <label><input type="radio" name="lighting" value="other"> OTHER: <input type="text" /></label>
+          </div>
+          <div class="question">
+            <label>3) HAVE YOU EXPERIENCED ANY SAFETY CONCERNS HERE?</label>
+            <textarea rows="3" placeholder="Your answer..."></textarea>
+          </div>
+        `;
+      } else if (topic === "Wellness") {
+        container.innerHTML = `
+          <div class="question">
+            <label>1) HOW WOULD YOU RATE THE AIR QUALITY AND NOISE LEVEL?</label>
+            <label><input type="radio" name="air" value="good"> GOOD</label>
+            <label><input type="radio" name="air" value="bad"> BAD</label>
+            <label><input type="radio" name="air" value="neither"> NEITHER</label>
+          </div>
+          <div class="question">
+            <label>2) DOES THE PARK’S GREENERY IMPROVE YOUR MOOD?</label>
+            <label><input type="radio" name="mood" value="strongly agree"> STRONGLY AGREE</label>
+            <label><input type="radio" name="mood" value="agree"> AGREE</label>
+            <label><input type="radio" name="mood" value="sometimes"> SOMETIME</label>
+            <label><input type="radio" name="mood" value="disagree"> STRONGLY DISAGREE</label>
+          </div>
+          <div class="question">
+            <label>3) DO YOU USE THE PARK FOR QUIET REFLECTION OR MINDFULNESS?</label>
+            <label><input type="radio" name="mindfulness" value="yes"> YES</label>
+            <label><input type="radio" name="mindfulness" value="no"> NO</label>
+            <label><input type="radio" name="mindfulness" value="other"> OTHER: <input type="text" /></label>
+          </div>
+        `;
+      }
+    }
+
+    function submitSurvey() {
+      userPoints += 10;
+      document.getElementById("points").innerText = userPoints;
+      showSection('confirmation');
+    }
+
+    function submitSuggestion() {
+      const suggestion = document.getElementById("suggestionInput").value.trim();
+      if (suggestion) {
+        alert("Thank you for your suggestion!");
+        console.log("Suggestion received:", suggestion);
+      } else {
+        alert("Please enter a suggestion before submitting.");
+        return;
+      }
+      document.getElementById("suggestionInput").value = "";
+      showSection('thankyou');
+    }
+
+    function restart() {
+      document.getElementById("comments").value = "";
+      document.getElementById("imageUpload").value = "";
+      showSection('welcome');
+    }
+
+    function showSection(sectionId) {
+      const sections = ["welcome", "survey", "confirmation", "share", "suggest", "thankyou"];
+      sections.forEach(id => document.getElementById(id).classList.add("hidden"));
+      document.getElementById(sectionId).classList.remove("hidden");
+    }
+  </script>
+
+</body>
+</html>
